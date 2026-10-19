@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emisor de Constancias - ITCancún</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* ESTILO GLOBAL Y FONDO OSCURO */
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { 
+            background-color: #0a1128; 
+            background-image: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.15), transparent 40%),
+                              radial-gradient(circle at 85% 30%, rgba(37, 99, 235, 0.15), transparent 40%);
+            margin: 0; 
+            padding: 40px 15px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; 
+            padding: 20px 30px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            max-width: 750px; 
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .header img { width: 55px; height: 55px; background: white; border-radius: 12px; padding: 6px; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px;}
+        .header p { margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; }
+
+        .card { 
+            background: rgba(15, 23, 42, 0.8); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            max-width: 750px; 
+            width: 100%;
+        }
+
+        .section-title { font-size: 14px; font-weight: 600; color: #38bdf8; margin: 20px 0 12px 0; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .section-title:first-child { margin-top: 0; }
+        
+        .row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .field { flex: 1; display: flex; flex-direction: column; }
+        .field.full { flex: 100%; }
+        
+        label { font-size: 12px; color: #cbd5e1; font-weight: 500; margin-bottom: 6px; }
+        
+        input, select { 
+            padding: 12px 14px; 
+            font-size: 14px; 
+            background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            color: #f8fafc;
+            border-radius: 8px; 
+            outline: none; 
+            transition: all 0.3s;
+        }
+        input:focus, select:focus { 
+            border-color: #38bdf8; 
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+        input[readonly] { background: rgba(255, 255, 255, 0.02); color: #94a3b8; }
+        select option { background: #0f172a; color: white; }
+
+        /* ESTILO PARA EL INPUT DE ARCHIVO */
+        input[type="file"] {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px dashed #38bdf8;
+            cursor: pointer;
+        }
+        input[type="file"]::file-selector-button {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+        input[type="file"]::file-selector-button:hover { background: #0ea5e9; }
+
+        .folio-group { display: flex; gap: 10px; }
+        .folio-group input { flex: 1; font-weight: 600; letter-spacing: 1px; color: #38bdf8; }
+        
+        .btn-sm { padding: 12px 20px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-sm:hover { background: #d97706; }
+
+        .info-box { background: rgba(56, 189, 248, 0.1); border-left: 4px solid #38bdf8; padding: 12px 16px; border-radius: 8px; font-size: 13px; color: #e0f2fe; margin: 15px 0; line-height: 1.6; }
+        .url-box { background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px; font-size: 12px; color: #94a3b8; font-family: monospace; word-break: break-all; margin-top: 8px; border: 1px solid rgba(255,255,255,0.05); }
+
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6); }
+
+        .actions { display: flex; gap: 12px; margin-top: 20px; }
+        .actions button { flex: 1; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; color: white; transition: 0.3s; }
+        .btn-pdf { background: rgba(239, 68, 68, 0.9); } .btn-pdf:hover { background: #ef4444; }
+        .btn-qr { background: rgba(59, 130, 246, 0.9); } .btn-qr:hover { background: #3b82f6; }
+        .btn-hist { background: rgba(139, 92, 246, 0.9); } .btn-hist:hover { background: #8b5cf6; }
+
+        #qrArea { margin-top: 25px; min-height: 250px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.2); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15); }
+        .status { text-align: center; font-size: 13px; color: #10b981; font-weight: 600; margin-top: 12px; }
+        
+        #cartaPDF { position: fixed; left: -9999px; top: 0; width: 816px; min-height: 1056px; background: white; padding: 50px; font-family: 'Times New Roman', serif; color: #000; font-size: 13px; line-height: 1.7; box-sizing: border-box; }
+        .carta-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
+        .carta-header-left img { width: 130px; margin-top: 5px; }
+        .carta-header-right .instituto { font-size: 13px; font-weight: bold; }
+        .carta-header-right .subdireccion { font-size: 11px; margin-bottom: 8px; }
+        .carta-titulo { text-align: center; font-size: 14px; font-weight: bold; margin: 20px 0; }
+        .carta-cuerpo { text-align: justify; margin: 25px 0; }
+        .carta-firmas { margin-top: 60px; display: flex; justify-content: space-around; align-items: flex-end; }
+        .firma-bloque { text-align: center; width: 40%; }
+        .firma-linea { border-top: 1.5px solid #000; padding-top: 6px; font-size: 11px; font-weight: bold; }
+        .atentamente { text-align: center; font-weight: bold; font-size: 13px; margin-top: 30px; }
+        .carta-qr { text-align: right; margin-top: 20px; }
+        .carta-qr img { width: 90px; height: 90px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="ITC">
+        <div>
+            <h1>Emisor de Constancias</h1>
+            <p>Instituto Tecnológico de Cancún · Subdirección Académica</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">📋 DATOS DEL ALUMNO</div>
+        <div class="row">
+            <div class="field full">
+                <label>Nombre completo</label>
+                <input type="text" id="nombre" placeholder="Ej: Manuel Felipe Poot Koh">
+            </div>
+        </div>
+        <div class="row">
+            <div class="field">
+                <label>No. de control</label>
+                <input type="text" id="noControl" placeholder="Ej: 21530614">
+            </div>
+            <div class="field">
+                <label>Fecha de emisión</label>
+                <input type="date" id="fecha">
+            </div>
+        </div>
+
+        <div class="section-title">🎓 CARRERA DEL ALUMNO</div>
+        <div class="row">
+            <div class="field full">
+                <label>Carrera</label>
+                <select id="carrera" onchange="actualizarInfoFormato()">
+                    <option value="">— Selecciona la carrera —</option>
+                    <optgroup label="INGENIERÍAS">
+                        <option value="Ingeniería en Sistemas Computacionales">Ingeniería en Sistemas Computacionales</option>
+                        <option value="Ingeniería en Arquitectura">Ingeniería en Arquitectura</option>
+                        <option value="Ingeniería Civil">Ingeniería Civil</option>
+                        <option value="Ingeniería Electromecánica">Ingeniería Electromecánica</option>
+                        <option value="Ingeniería Mecatrónica">Ingeniería Mecatrónica</option>
+                        <option value="Ingeniería Ferroviaria">Ingeniería Ferroviaria</option>
+                    </optgroup>
+                    <optgroup label="ECONÓMICO-ADMINISTRATIVAS">
+                        <option value="Contador Público">Contador Público</option>
+                        <option value="Ingeniería en Gestión Empresarial">Ingeniería en Gestión Empresarial</option>
+                        <option value="Ingeniería en Administración">Ingeniería en Administración</option>
+                        <option value="Turismo">Turismo</option>
+                        <option value="Licenciatura en Administración">Licenciatura en Administración</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="info-box" id="infoFormato">ℹ️ Selecciona una carrera para ver a quién irá dirigida la constancia.</div>
+
+        <div class="section-title">📚 DATOS DEL CURSO</div>
+        <div class="row">
+            <div class="field full">
+                <label>Nombre del curso MOOC</label>
+                <input type="text" id="curso" placeholder="Ej: Desarrollo Sostenible">
+            </div>
+        </div>
+        <div class="row">
+            <div class="field">
+                <label>Plataforma</label>
+                <select id="plataforma">
+                    <option value="TecNM">TecNM</option>
+                    <option value="Coursera">Coursera</option>
+                    <option value="edX">edX</option>
+                    <option value="Udemy">Udemy</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Créditos</label>
+                <input type="number" id="creditos" value="1" readonly>
+            </div>
+        </div>
+
+        <!-- NUEVO CAMPO PARA SUBIR PDF -->
+        <div class="section-title">📎 EVIDENCIA (REQUISITO)</div>
+        <div class="row">
+            <div class="field full">
+                <label>Sube el certificado del curso en formato PDF</label>
+                <input type="file" id="archivoPDF" accept=".pdf" required>
+            </div>
+        </div>
+
+        <div class="section-title">🔖 FOLIO DE VALIDACIÓN</div>
+        <div class="folio-group">
+            <input type="text" id="folio" readonly placeholder="Genera un folio primero">
+            <button class="btn-sm" onclick="generarFolio()">🔄 Generar</button>
+        </div>
+        <div class="url-box" id="urlPreview">URL de validación: —</div>
+
+        <button class="btn-main" id="btnGenerar" onclick="generarTodo()">✅ GENERAR CONSTANCIA</button>
+
+        <div id="qrArea"><p style="color:#64748b;">El código QR aparecerá aquí</p></div>
+        <div class="status" id="status"></div>
+
+        <div class="actions">
+            <button class="btn-pdf" id="btnPDF" onclick="generarPDF()">📄 Descargar Constancia (PDF)</button>
+            <button class="btn-qr" id="btnGuardarQR" onclick="guardarQR()">💾 Guardar QR</button>
+            <button class="btn-hist" onclick="descargarHistorial()">📊 Historial</button>
+        </div>
+    </div>
+
+    <!-- CARTA OCULTA PARA EL PDF -->
+    <div id="cartaPDF">
+        <div class="carta-header">
+            <div class="carta-header-left">
+                <div style="font-size:11px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
+                <img src="logo.png" alt="ITC">
+            </div>
+            <div class="carta-header-right">
+                <div class="instituto">Instituto Tecnológico de Cancún</div>
+                <div class="subdireccion">Subdirección Académica</div>
+                <div class="subdireccion" id="pdfDepartamento"></div>
+            </div>
+        </div>
+        <div class="carta-titulo">Constancia de Acreditación de Actividad Complementaria</div>
+        <div class="carta-titulo" style="font-size: 12px; margin-top: 15px;">
+            <div id="pdfDirigido">JEFE DEL DEPARTAMENTO</div>
+            <div style="font-weight: normal;">PRESENTE</div>
+        </div>
+        <div class="carta-cuerpo">
+            <p>El que suscribe <strong id="pdfJefe">NOMBRE DEL JEFE</strong>, <span id="pdfCargo">Cargo</span>, se permite hacer de su conocimiento que el (la) alumno (a) <strong id="pdfAlumno">ALUMNO</strong>, con número de control <strong id="pdfControl">000</strong>, de la carrera de <strong><em id="pdfCarrera">CARRERA</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <em id="pdfCurso">CURSO</em>, en la plataforma de <span id="pdfPlataforma">PLATAFORMA</span>, con un valor de <span id="pdfCreditos">1</span> crédito.</p>
+            <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los <span id="pdfDia">01</span> días del mes de <span id="pdfMes">enero</span> del <span id="pdfAño">2026</span>.</p>
+        </div>
+        <div class="atentamente">ATENTAMENTE</div>
+        <div class="carta-firmas">
+            <div class="firma-bloque">
+                <div style="height: 55px;"></div>
+                <div class="firma-linea" id="pdfFirmaJefe">NOMBRE<br>CARGO</div>
+            </div>
+            <div class="firma-bloque">
+                <div style="height: 55px;"></div>
+                <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
+            </div>
+        </div>
+        <div class="carta-qr">
+            <div style="font-size:10px;">Folio: <strong id="pdfFolio">XXXX</strong></div>
+            <div id="pdfQRContainer"></div>
+            <div style="font-size: 9px;">Valida en: itcancun.edu.mx/validar</div>
+        </div>
+    </div>
+
+    <script>
+        let qrDataURL = null;
+        const URL_BASE = 'https://jorgeperrez754-arch.github.io/validar-constancias-itc/?folio=';
+
+        const FORMATOS = {
+            'Ingeniería en Sistemas Computacionales': { jefe: 'ISMAEL AGUSTÍN SILVA DZIB', cargo: 'JEFE DEL DEPTO. DE SISTEMAS Y COMPUTACIÓN', departamento: 'Depto. de Sistemas y Computación' },
+            'Ingeniería en Arquitectura': { jefe: 'GUSTAVO PÉREZ HERNÁNDEZ', cargo: 'JEFE DEL DEPTO. DE INGENIERÍAS', departamento: 'Depto. de Ingenierías' },
+            'Ingeniería Civil': { jefe: 'GUSTAVO PÉREZ HERNÁNDEZ', cargo: 'JEFE DEL DEPTO. DE INGENIERÍAS', departamento: 'Depto. de Ingenierías' },
+            'Ingeniería Electromecánica': { jefe: 'GUSTAVO PÉREZ HERNÁNDEZ', cargo: 'JEFE DEL DEPTO. DE INGENIERÍAS', departamento: 'Depto. de Ingenierías' },
+            'Ingeniería Mecatrónica': { jefe: 'GUSTAVO PÉREZ HERNÁNDEZ', cargo: 'JEFE DEL DEPTO. DE INGENIERÍAS', departamento: 'Depto. de Ingenierías' },
+            'Ingeniería Ferroviaria': { jefe: 'GUSTAVO PÉREZ HERNÁNDEZ', cargo: 'JEFE DEL DEPTO. DE INGENIERÍAS', departamento: 'Depto. de Ingenierías' },
+            'Contador Público': { jefe: 'JOSÉ ROMÁN BRACAMONTE PACHECO', cargo: 'JEFE DEL DEPTO. ECONÓMICO ADMINISTRATIVAS', departamento: 'Depto. Económico-Administrativas' },
+            'Ingeniería en Gestión Empresarial': { jefe: 'JOSÉ ROMÁN BRACAMONTE PACHECO', cargo: 'JEFE DEL DEPTO. ECONÓMICO ADMINISTRATIVAS', departamento: 'Depto. Económico-Administrativas' },
+            'Ingeniería en Administración': { jefe: 'JOSÉ ROMÁN BRACAMONTE PACHECO', cargo: 'JEFE DEL DEPTO. ECONÓMICO ADMINISTRATIVAS', departamento: 'Depto. Económico-Administrativas' },
+            'Turismo': { jefe: 'JOSÉ ROMÁN BRACAMONTE PACHECO', cargo: 'JEFE DEL DEPTO. ECONÓMICO ADMINISTRATIVAS', departamento: 'Depto. Económico-Administrativas' },
+            'Licenciatura en Administración': { jefe: 'JOSÉ ROMÁN BRACAMONTE PACHECO', cargo: 'JEFE DEL DEPTO. ECONÓMICO ADMINISTRATIVAS', departamento: 'Depto. Económico-Administrativas' }
+        };
+
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        function generarFolio() {
+            const año = new Date().getFullYear();
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let codigo = '';
+            for (let i = 0; i < 8; i++) codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+            const folio = `ITC-${año}-${codigo}`;
+            document.getElementById('folio').value = folio;
+            document.getElementById('urlPreview').textContent = 'URL de validación: ' + URL_BASE + folio;
+        }
+
+        function actualizarInfoFormato() {
+            const carrera = document.getElementById('carrera').value;
+            const info = document.getElementById('infoFormato');
+            if (!carrera || !FORMATOS[carrera]) { info.innerHTML = 'ℹ️ Selecciona una carrera.'; return; }
+            const f = FORMATOS[carrera];
+            info.innerHTML = `<strong>Va dirigido a:</strong> ${f.jefe}<br><strong>Cargo:</strong> ${f.cargo}<br><strong>Firma subdirector:</strong> Diego Ramón Briceño Domínguez`;
+        }
+
+        async function generarTodo() {
+            try {
+                const nombre = document.getElementById('nombre').value.trim();
+                const noControl = document.getElementById('noControl').value.trim();
+                const carrera = document.getElementById('carrera').value;
+                const curso = document.getElementById('curso').value.trim();
+                const plataforma = document.getElementById('plataforma').value;
+                const creditos = document.getElementById('creditos').value;
+                const fecha = document.getElementById('fecha').value;
+                const folio = document.getElementById('folio').value.trim();
+                
+                // NUEVA VALIDACIÓN DEL ARCHIVO PDF
+                const archivoInput = document.getElementById('archivoPDF');
+                if (archivoInput.files.length === 0) {
+                    return alert('⚠️ Es obligatorio subir el certificado en PDF como evidencia.');
+                }
+
+                if (!nombre || !noControl || !carrera || !curso || !fecha || !folio) {
+                    return alert('Por favor, llena todos los campos de texto y genera un folio.');
+                }
+
+                const url = URL_BASE + folio;
+
+                const tempDiv = document.createElement('div');
+                new QRCode(tempDiv, { text: url, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.H });
+                await new Promise(r => setTimeout(r, 300));
+                const qrCanvasTemp = tempDiv.querySelector('canvas');
+
+                const canvasFinal = document.createElement('canvas');
+                canvasFinal.width = 280; canvasFinal.height = 280;
+                const ctx = canvasFinal.getContext('2d');
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 280, 280);
+                ctx.drawImage(qrCanvasTemp, 10, 10, 260, 260);
+
+                const logoImg = new Image();
+                logoImg.src = 'logo.png';
+                await new Promise(r => { logoImg.onload = r; logoImg.onerror = r; });
+                if (logoImg.complete && logoImg.naturalWidth > 0) {
+                    const logoSize = 60, logoX = (280 - logoSize) / 2, logoY = (280 - logoSize) / 2;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8);
+                    ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+                }
+
+                const qrArea = document.getElementById('qrArea');
+                qrArea.innerHTML = '';
+                qrArea.appendChild(canvasFinal);
+                qrDataURL = canvasFinal.toDataURL('image/png');
+
+                const f = FORMATOS[carrera];
+                document.getElementById('pdfJefe').textContent = f.jefe;
+                document.getElementById('pdfCargo').textContent = f.cargo;
+                document.getElementById('pdfDirigido').textContent = f.jefe + ' - ' + f.cargo;
+                document.getElementById('pdfDepartamento').textContent = f.departamento;
+                document.getElementById('pdfAlumno').textContent = nombre;
+                document.getElementById('pdfControl').textContent = noControl;
+                document.getElementById('pdfCarrera').textContent = carrera;
+                document.getElementById('pdfCurso').textContent = curso;
+                document.getElementById('pdfPlataforma').textContent = plataforma;
+                document.getElementById('pdfCreditos').textContent = creditos;
+                document.getElementById('pdfFolio').textContent = folio;
+                document.getElementById('pdfFirmaJefe').innerHTML = f.jefe + '<br>' + f.cargo;
+
+                const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+                const [y, m, d] = fecha.split('-');
+                document.getElementById('pdfDia').textContent = parseInt(d);
+                document.getElementById('pdfMes').textContent = meses[parseInt(m) - 1];
+                document.getElementById('pdfAño').textContent = y;
+
+                const qrCarta = document.getElementById('pdfQRContainer');
+                qrCarta.innerHTML = '';
+                const qrImg = document.createElement('img');
+                qrImg.src = qrDataURL;
+                qrCarta.appendChild(qrImg);
+
+                document.getElementById('status').textContent = '✅ Constancia generada. Lista para descargar.';
+                
+                // Guardamos en el historial (solo el nombre del archivo PDF)
+                let historial = JSON.parse(localStorage.getItem('historial_itc') || '[]');
+                historial.push({
+                    folio, nombre, noControl, carrera, curso, plataforma, fecha,
+                    evidencia: archivoInput.files[0].name // <-- Se guarda el nombre del PDF
+                });
+                localStorage.setItem('historial_itc', JSON.stringify(historial));
+
+            } catch (error) {
+                alert("Hubo un error al generar la constancia: " + error.message);
+                console.error(error);
+            }
+        }
+
+        function descargarHistorial() {
+            let historial = JSON.parse(localStorage.getItem('historial_itc') || '[]');
+            if (historial.length === 0) return alert('No hay registros aún.');
+            
+            let csv = 'Folio,Fecha,Nombre,No.Control,Carrera,Curso,Plataforma,Evidencia\n';
+            historial.forEach(h => { csv += `"${h.folio}","${h.fecha}","${h.nombre}","${h.noControl}","${h.carrera}","${h.curso}","${h.plataforma}","${h.evidencia}"\n`; });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'historial_constancias.csv';
+            link.click();
+        }
+
+        function guardarQR() {
+            if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA' para crear el código QR.");
+            const link = document.createElement('a');
+            link.href = qrDataURL;
+            link.download = `QR-${document.getElementById('folio').value}.png`;
+            link.click();
+        }
+
+        async function generarPDF() {
+            if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA' para crear el código QR.");
+            
+            const btnPDF = document.getElementById('btnPDF');
+            const textoOriginal = btnPDF.innerHTML;
+            btnPDF.innerHTML = "⏳ Generando...";
+
+            try {
+                const carta = document.getElementById('cartaPDF');
+                const canvas = await html2canvas(carta, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+                const imgData = canvas.toDataURL('image/png');
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'letter');
+                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+                
+                const folio = document.getElementById('folio').value || 'sin-folio';
+                pdf.save(`Constancia-${folio}.pdf`);
+                
+                btnPDF.innerHTML = "✅ ¡Descargado!";
+                setTimeout(() => { btnPDF.innerHTML = textoOriginal; }, 2000);
+            } catch (e) {
+                alert("Hubo un error al generar el PDF. Intenta de nuevo.");
+                btnPDF.innerHTML = textoOriginal;
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>
