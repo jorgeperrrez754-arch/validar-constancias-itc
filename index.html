@@ -83,7 +83,6 @@
         input[readonly] { background: rgba(255, 255, 255, 0.02); color: #94a3b8; }
         select option { background: #0f172a; color: white; }
 
-        /* ESTILO PARA EL INPUT DE ARCHIVO */
         input[type="file"] {
             background: rgba(56, 189, 248, 0.1);
             border: 1px dashed #38bdf8;
@@ -123,7 +122,25 @@
         #qrArea { margin-top: 25px; min-height: 250px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.2); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15); }
         .status { text-align: center; font-size: 13px; color: #10b981; font-weight: 600; margin-top: 12px; }
         
-        #cartaPDF { position: fixed; left: -9999px; top: 0; width: 816px; min-height: 1056px; background: white; padding: 50px; font-family: 'Times New Roman', serif; color: #000; font-size: 13px; line-height: 1.7; box-sizing: border-box; }
+        /* ═══════ ARREGLO CLAVE PARA QUE EL PDF FUNCIONE EN LA WEB ═══════ */
+        #cartaPDF { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: -9999; 
+            opacity: 0; 
+            pointer-events: none; 
+            width: 816px; 
+            min-height: 1056px; 
+            background: white; 
+            padding: 50px; 
+            font-family: 'Times New Roman', serif; 
+            color: #000; 
+            font-size: 13px; 
+            line-height: 1.7; 
+            box-sizing: border-box; 
+        }
+        
         .carta-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
         .carta-header-left img { width: 130px; margin-top: 5px; }
         .carta-header-right .instituto { font-size: 13px; font-weight: bold; }
@@ -192,13 +209,63 @@
             </div>
         </div>
 
-        <div class="info-box" id="infoFormato">ℹ️ Selecciona una carrera para ver a quién irá dirigida la constancia.</div>
+        <!-- CAMBIO 1: Texto cambiado a "Va firmado por" -->
+        <div class="info-box" id="infoFormato">
+            ℹ️ Selecciona una carrera para ver quién firma la constancia.
+        </div>
 
         <div class="section-title">📚 DATOS DEL CURSO</div>
         <div class="row">
             <div class="field full">
-                <label>Nombre del curso MOOC</label>
-                <input type="text" id="curso" placeholder="Ej: Desarrollo Sostenible">
+                <label>Selecciona el Curso MOOC (Catálogo Oficial)</label>
+                <!-- CAMBIO 2: Lista desplegable con los 45 cursos -->
+                <select id="curso">
+                    <option value="">— Selecciona el curso —</option>
+                    <option value="Diseño de Experimentos con un Factor">Diseño de Experimentos con un Factor</option>
+                    <option value="Estimación estadística">Estimación estadística</option>
+                    <option value="Herramientas de Gestión y comunicación en la nube">Herramientas de Gestión y comunicación en la nube</option>
+                    <option value="Algebra Lineal">Algebra Lineal</option>
+                    <option value="Aritmética y principios de Algebra">Aritmética y principios de Algebra</option>
+                    <option value="GL English for the Semiconductor Industry">GL English for the Semiconductor Industry</option>
+                    <option value="Desarrollo Sustentable, nuestro futuro compartido">Desarrollo Sustentable, nuestro futuro compartido</option>
+                    <option value="Emprendimientos colectivos basados en economía social solidaria">Emprendimientos colectivos basados en economía social solidaria</option>
+                    <option value="Zentra tus Finanzas I">Zentra tus Finanzas I</option>
+                    <option value="Zentra tus Finanzas II">Zentra tus Finanzas II</option>
+                    <option value="Química: Introducción a la Teoría Cuántica">Química: Introducción a la Teoría Cuántica</option>
+                    <option value="Aprendizaje básico de Lengua Materna Xiiuy">Aprendizaje básico de Lengua Materna Xiiuy</option>
+                    <option value="Análisis Estratégico de la Innovación">Análisis Estratégico de la Innovación</option>
+                    <option value="Entendiendo el cálculo integral">Entendiendo el cálculo integral</option>
+                    <option value="Fundamentos de las redes inalámbricas y sus aplicaciones, la esencia de lo intangible">Fundamentos de las redes inalámbricas y sus aplicaciones, la esencia de lo intangible</option>
+                    <option value="Introduction to Microelectronics and Nanoelectronics">Introduction to Microelectronics and Nanoelectronics</option>
+                    <option value="Como crear y administrar un curso en MOODLE">Como crear y administrar un curso en MOODLE</option>
+                    <option value="Ética, el ser humano y la ciencia">Ética, el ser humano y la ciencia</option>
+                    <option value="Desarrollo de Habilidades Blandas con Enfoque Humanista">Desarrollo de Habilidades Blandas con Enfoque Humanista</option>
+                    <option value="Dinámica de Cuerpos Rígidos: Cinemática y Cinética">Dinámica de Cuerpos Rígidos: Cinemática y Cinética</option>
+                    <option value="Investigación, Descubriendo hechos y principios">Investigación, Descubriendo hechos y principios</option>
+                    <option value="Probabilidad y estadística">Probabilidad y estadística</option>
+                    <option value="Uso de TIC en distribuciones de probabilidad continuas">Uso de TIC en distribuciones de probabilidad continuas</option>
+                    <option value="Dibujo asistido por computadora en la nube">Dibujo asistido por computadora en la nube</option>
+                    <option value="Programación para centro de maquinado vertical con software CAD/CAM">Programación para centro de maquinado vertical con software CAD/CAM</option>
+                    <option value="Educación Inclusiva">Educación Inclusiva</option>
+                    <option value="Tabla periódica y propiedades de los elementos">Tabla periódica y propiedades de los elementos</option>
+                    <option value="Gestión de Datos en Excel Básico 1">Gestión de Datos en Excel Básico 1</option>
+                    <option value="Programación Básica en Python">Programación Básica en Python</option>
+                    <option value="Simulación de tiempos estándar con ProModel">Simulación de tiempos estándar con ProModel</option>
+                    <option value="Fundamentos vectoriales y estática de la partícula">Fundamentos vectoriales y estática de la partícula</option>
+                    <option value="Dinámica de Partículas: cinemática y cinética">Dinámica de Partículas: cinemática y cinética</option>
+                    <option value="Calculo Diferencial">Calculo Diferencial</option>
+                    <option value="Uso de la Madurez Tecnológica (TRL) en la Innovación y Transferencia de Tecnología">Uso de la Madurez Tecnológica (TRL) en la Innovación y Transferencia de Tecnología</option>
+                    <option value="Elaboración de Proyectos de Innovación y Transferencia Tecnológica bajo el Enfoque de Marco Lógico">Elaboración de Proyectos de Innovación y Transferencia Tecnológica bajo el Enfoque de Marco Lógico</option>
+                    <option value="Modelo Talento Emprendedor">Modelo Talento Emprendedor</option>
+                    <option value="EducaTec: Mi dinero seguro en el mundo digital">EducaTec: Mi dinero seguro en el mundo digital</option>
+                    <option value="Construyendo la Base Financiera de tu Emprendimiento">Construyendo la Base Financiera de tu Emprendimiento</option>
+                    <option value="Lengua de Señas Mexicana Básico 1">Lengua de Señas Mexicana Básico 1</option>
+                    <option value="Lengua Materna Maya 2: Maayat'aan ka'ap'éel.">Lengua Materna Maya 2: Maayat'aan ka'ap'éel.</option>
+                    <option value="Lengua Materna Maya 1: Maayat'aan jump'éel.">Lengua Materna Maya 1: Maayat'aan jump'éel.</option>
+                    <option value="Inglés para la Industria Subacuática">Inglés para la Industria Subacuática</option>
+                    <option value="Introducción a la Microelectrónica y la nanoelectrónica">Introducción a la Microelectrónica y la nanoelectrónica</option>
+                    <option value="Inglés para la Industria de Semiconductores">Inglés para la Industria de Semiconductores</option>
+                </select>
             </div>
         </div>
         <div class="row">
@@ -217,7 +284,6 @@
             </div>
         </div>
 
-        <!-- NUEVO CAMPO PARA SUBIR PDF -->
         <div class="section-title">📎 EVIDENCIA (REQUISITO)</div>
         <div class="row">
             <div class="field full">
@@ -264,7 +330,8 @@
             <div style="font-weight: normal;">PRESENTE</div>
         </div>
         <div class="carta-cuerpo">
-            <p>El que suscribe <strong id="pdfJefe">NOMBRE DEL JEFE</strong>, <span id="pdfCargo">Cargo</span>, se permite hacer de su conocimiento que el (la) alumno (a) <strong id="pdfAlumno">ALUMNO</strong>, con número de control <strong id="pdfControl">000</strong>, de la carrera de <strong><em id="pdfCarrera">CARRERA</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <em id="pdfCurso">CURSO</em>, en la plataforma de <span id="pdfPlataforma">PLATAFORMA</span>, con un valor de <span id="pdfCreditos">1</span> crédito.</p>
+            <!-- CAMBIO 3: El curso ahora va en negritas y cursiva usando <strong><em> -->
+            <p>El que suscribe <strong id="pdfJefe">NOMBRE DEL JEFE</strong>, <span id="pdfCargo">Cargo</span>, se permite hacer de su conocimiento que el (la) alumno (a) <strong id="pdfAlumno">ALUMNO</strong>, con número de control <strong id="pdfControl">000</strong>, de la carrera de <strong><em id="pdfCarrera">CARRERA</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em id="pdfCurso">CURSO</em></strong>, en la plataforma de <span id="pdfPlataforma">PLATAFORMA</span>, con un valor de <span id="pdfCreditos">1</span> crédito.</p>
             <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los <span id="pdfDia">01</span> días del mes de <span id="pdfMes">enero</span> del <span id="pdfAño">2026</span>.</p>
         </div>
         <div class="atentamente">ATENTAMENTE</div>
@@ -318,9 +385,10 @@
         function actualizarInfoFormato() {
             const carrera = document.getElementById('carrera').value;
             const info = document.getElementById('infoFormato');
-            if (!carrera || !FORMATOS[carrera]) { info.innerHTML = 'ℹ️ Selecciona una carrera.'; return; }
+            if (!carrera || !FORMATOS[carrera]) { info.innerHTML = 'ℹ️ Selecciona una carrera para ver quién firma la constancia.'; return; }
             const f = FORMATOS[carrera];
-            info.innerHTML = `<strong>Va dirigido a:</strong> ${f.jefe}<br><strong>Cargo:</strong> ${f.cargo}<br><strong>Firma subdirector:</strong> Diego Ramón Briceño Domínguez`;
+            // CAMBIO 1: Texto cambiado a "Va firmado por:"
+            info.innerHTML = `<strong>Va firmado por:</strong> ${f.jefe}<br><strong>Cargo:</strong> ${f.cargo}<br><strong>Firma subdirector:</strong> Diego Ramón Briceño Domínguez`;
         }
 
         async function generarTodo() {
@@ -328,13 +396,12 @@
                 const nombre = document.getElementById('nombre').value.trim();
                 const noControl = document.getElementById('noControl').value.trim();
                 const carrera = document.getElementById('carrera').value;
-                const curso = document.getElementById('curso').value.trim();
+                const curso = document.getElementById('curso').value;
                 const plataforma = document.getElementById('plataforma').value;
                 const creditos = document.getElementById('creditos').value;
                 const fecha = document.getElementById('fecha').value;
                 const folio = document.getElementById('folio').value.trim();
                 
-                // NUEVA VALIDACIÓN DEL ARCHIVO PDF
                 const archivoInput = document.getElementById('archivoPDF');
                 if (archivoInput.files.length === 0) {
                     return alert('⚠️ Es obligatorio subir el certificado en PDF como evidencia.');
@@ -400,11 +467,10 @@
 
                 document.getElementById('status').textContent = '✅ Constancia generada. Lista para descargar.';
                 
-                // Guardamos en el historial (solo el nombre del archivo PDF)
                 let historial = JSON.parse(localStorage.getItem('historial_itc') || '[]');
                 historial.push({
                     folio, nombre, noControl, carrera, curso, plataforma, fecha,
-                    evidencia: archivoInput.files[0].name // <-- Se guarda el nombre del PDF
+                    evidencia: archivoInput.files[0].name
                 });
                 localStorage.setItem('historial_itc', JSON.stringify(historial));
 
