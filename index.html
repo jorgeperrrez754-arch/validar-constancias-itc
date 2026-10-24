@@ -367,7 +367,24 @@
             }
         }
 
+        // =========================================================================
+        // HISTORIAL PROTEGIDO CON CONTRASEÑA
+        // =========================================================================
         function descargarHistorial() {
+            // 🔒 CONTRASEÑA DE ADMINISTRADOR (Puedes cambiarla aquí)
+            const PASSWORD_ADMIN = "ITCancun2026"; 
+            
+            const intento = prompt("🔒 Área restringida. Ingresa la contraseña de administrador:");
+            
+            // Si el usuario cancela o se equivoca, se cancela la descarga
+            if (intento !== PASSWORD_ADMIN) {
+                if (intento !== null) {
+                    alert("❌ Contraseña incorrecta. Acceso denegado.");
+                }
+                return; 
+            }
+
+            // Si la contraseña es correcta, procede a descargar el CSV
             let historial = JSON.parse(localStorage.getItem('historial_itc') || '[]');
             if (historial.length === 0) return alert('No hay registros aún.');
             
