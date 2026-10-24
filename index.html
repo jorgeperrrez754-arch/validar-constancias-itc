@@ -416,77 +416,69 @@
                 <head>
                     <title>Constancia-${folio}</title>
                     <style>
-                        /* Ajustes milimétricos para que quepa en 1 hoja */
                         @page { margin: 0; size: letter; }
-                        body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
+                        body { margin: 0; padding: 0; background: #fff; }
                         .carta { 
-                            width: 216mm; 
-                            height: 279mm; 
-                            padding: 25mm 20mm; /* Márgenes más pequeños */
-                            box-sizing: border-box; 
-                            font-family: 'Times New Roman', serif; 
-                            color: #000; 
-                            font-size: 13px; 
-                            line-height: 1.5; 
-                            overflow: hidden; /* Evita que se desborde a otra hoja */
+                            width: 100%; height: 100vh; padding: 60px; box-sizing: border-box; 
+                            font-family: 'Times New Roman', serif; color: #000; font-size: 15px; line-height: 1.8; 
                         }
-                        .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-                        .header-left img { width: 100px; margin-top: 5px; } /* Escudo más chico */
+                        .header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+                        .header-left img { width: 140px; margin-top: 10px; }
                         .header-right { text-align: left; }
-                        .header-right .instituto { font-size: 13px; font-weight: bold; }
-                        .titulo { text-align: center; font-size: 14px; font-weight: bold; margin: 20px 0; }
-                        .cuerpo { text-align: justify; margin: 25px 0; }
-                        .firmas { margin-top: 60px; display: flex; justify-content: space-around; align-items: flex-end; }
+                        .header-right .instituto { font-size: 15px; font-weight: bold; }
+                        .titulo { text-align: center; font-size: 16px; font-weight: bold; margin: 30px 0; }
+                        .cuerpo { text-align: justify; margin: 40px 0; }
+                        .firmas { margin-top: 100px; display: flex; justify-content: space-around; align-items: flex-end; }
                         .firma { text-align: center; width: 40%; }
-                        .firma-linea { border-top: 1.5px solid #000; padding-top: 6px; font-size: 11px; font-weight: bold; line-height: 1.4; }
-                        .atentamente { text-align: center; font-weight: bold; font-size: 13px; margin-top: 30px; }
-                        .qr { text-align: right; margin-top: 20px; }
-                        .qr img { width: 80px; height: 80px; } /* QR más chico */
+                        .firma-linea { border-top: 1.5px solid #000; padding-top: 8px; font-size: 13px; font-weight: bold; }
+                        .atentamente { text-align: center; font-weight: bold; font-size: 15px; margin-top: 40px; }
+                        .qr { text-align: right; margin-top: 30px; }
+                        .qr img { width: 110px; height: 110px; }
                     </style>
                 </head>
                 <body>
                     <div class="carta">
                         <div class="header">
                             <div class="header-left">
-                                <div style="font-size:11px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
+                                <div style="font-size:12px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
                                 <img src="logo.png">
                             </div>
                             <div class="header-right">
                                 <div class="instituto">Instituto Tecnológico de Cancún</div>
-                                <div style="font-size: 11px; margin-bottom: 5px;">Subdirección Académica</div>
-                                <div style="font-size: 11px;">${f.departamento}</div>
+                                <div style="font-size: 12px; margin-bottom: 5px;">Subdirección Académica</div>
+                                <div style="font-size: 12px;">${f.departamento}</div>
                             </div>
                         </div>
                         
                         <div class="titulo">Constancia de Acreditación de Actividad Complementaria</div>
                         
-                        <div class="titulo" style="font-size: 12px; margin-top: 15px;">
+                        <div class="titulo" style="font-size: 13px; margin-top: 25px;">
                             <div>${f.jefe} - ${f.cargo}</div>
                             <div style="font-weight: normal; margin-top: 5px;">PRESENTE</div>
                         </div>
 
                         <div class="cuerpo">
                             <p>El que suscribe <strong>${f.jefe}</strong>, ${f.cargo}, se permite hacer de su conocimiento que el (la) alumno (a) <strong>${nombre}</strong>, con número de control <strong>${noControl}</strong>, de la carrera de <strong><em>${carrera}</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em>${curso}</em></strong>, en la plataforma de ${plataforma}, con un valor de 1 crédito.</p>
-                            <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los ${parseInt(d)} días del mes de ${mesTexto} del ${y}.</p>
+                            <p style="margin-top: 25px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los ${parseInt(d)} días del mes de ${mesTexto} del ${y}.</p>
                         </div>
 
                         <div class="atentamente">ATENTAMENTE</div>
 
                         <div class="firmas">
                             <div class="firma">
-                                <div style="height: 50px;"></div>
+                                <div style="height: 60px;"></div>
                                 <div class="firma-linea">${f.jefe}<br>${f.cargo}</div>
                             </div>
                             <div class="firma">
-                                <div style="height: 50px;"></div>
+                                <div style="height: 60px;"></div>
                                 <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
                             </div>
                         </div>
 
                         <div class="qr">
-                            <div style="font-size:10px; margin-bottom: 5px;">Folio: <strong>${folio}</strong></div>
+                            <div style="font-size:12px; margin-bottom: 5px;">Folio: <strong>${folio}</strong></div>
                             <img src="${qrDataURL}">
-                            <div style="font-size: 9px; margin-top: 5px;">Valida en: itcancun.edu.mx/validar</div>
+                            <div style="font-size: 10px; margin-top: 5px;">Valida en: itcancun.edu.mx/validar</div>
                         </div>
                     </div>
                 </body>
