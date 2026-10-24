@@ -390,7 +390,7 @@
         }
 
         // =========================================================================
-        // SOLUCIÓN DEFINITIVA: Pestaña nueva + Motor de impresión del navegador
+        // PDF CON ENCABEZADO Y PIE DE PÁGINA
         // =========================================================================
         function generarPDF() {
             if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA'.");
@@ -422,72 +422,70 @@
                         .carta { 
                             width: 216mm; 
                             height: 279mm; 
-                            padding: 25mm 20mm; /* Márgenes más pequeños */
+                            padding: 15mm 20mm; /* Márgenes ajustados */
                             box-sizing: border-box; 
                             font-family: 'Times New Roman', serif; 
                             color: #000; 
                             font-size: 13px; 
                             line-height: 1.5; 
-                            overflow: hidden; /* Evita que se desborde a otra hoja */
+                            display: flex;
+                            flex-direction: column;
                         }
-                        .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-                        .header-left img { width: 100px; margin-top: 5px; } /* Escudo más chico */
-                        .header-right { text-align: left; }
-                        .header-right .instituto { font-size: 13px; font-weight: bold; }
+                        .header-img { width: 100%; margin-bottom: 20px; }
+                        .footer-img { width: 100%; margin-top: auto; } /* Empuja el pie hasta abajo */
+                        .contenido { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+                        
                         .titulo { text-align: center; font-size: 14px; font-weight: bold; margin: 20px 0; }
                         .cuerpo { text-align: justify; margin: 25px 0; }
-                        .firmas { margin-top: 60px; display: flex; justify-content: space-around; align-items: flex-end; }
+                        .firmas { margin-top: 50px; display: flex; justify-content: space-around; align-items: flex-end; }
                         .firma { text-align: center; width: 40%; }
                         .firma-linea { border-top: 1.5px solid #000; padding-top: 6px; font-size: 11px; font-weight: bold; line-height: 1.4; }
                         .atentamente { text-align: center; font-weight: bold; font-size: 13px; margin-top: 30px; }
                         .qr { text-align: right; margin-top: 20px; }
-                        .qr img { width: 80px; height: 80px; } /* QR más chico */
+                        .qr img { width: 80px; height: 80px; }
                     </style>
                 </head>
                 <body>
                     <div class="carta">
-                        <div class="header">
-                            <div class="header-left">
-                                <div style="font-size:11px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
-                                <img src="logo.png">
+                        <!-- ENCABEZADO IMAGEN -->
+                        <img src="encabezado.png" class="header-img">
+
+                        <!-- CONTENIDO DE LA CONSTANCIA -->
+                        <div class="contenido">
+                            <div class="titulo">Constancia de Acreditación de Actividad Complementaria</div>
+                            
+                            <div class="titulo" style="font-size: 12px; margin-top: 15px;">
+                                <div>${f.jefe} - ${f.cargo}</div>
+                                <div style="font-weight: normal; margin-top: 5px;">PRESENTE</div>
                             </div>
-                            <div class="header-right">
-                                <div class="instituto">Instituto Tecnológico de Cancún</div>
-                                <div style="font-size: 11px; margin-bottom: 5px;">Subdirección Académica</div>
-                                <div style="font-size: 11px;">${f.departamento}</div>
+
+                            <div class="cuerpo">
+                                <p>El que suscribe <strong>${f.jefe}</strong>, ${f.cargo}, se permite hacer de su conocimiento que el (la) alumno (a) <strong>${nombre}</strong>, con número de control <strong>${noControl}</strong>, de la carrera de <strong><em>${carrera}</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em>${curso}</em></strong>, en la plataforma de ${plataforma}, con un valor de 1 crédito.</p>
+                                <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los ${parseInt(d)} días del mes de ${mesTexto} del ${y}.</p>
                             </div>
-                        </div>
-                        
-                        <div class="titulo">Constancia de Acreditación de Actividad Complementaria</div>
-                        
-                        <div class="titulo" style="font-size: 12px; margin-top: 15px;">
-                            <div>${f.jefe} - ${f.cargo}</div>
-                            <div style="font-weight: normal; margin-top: 5px;">PRESENTE</div>
+
+                            <div class="atentamente">ATENTAMENTE</div>
+
+                            <div class="firmas">
+                                <div class="firma">
+                                    <div style="height: 50px;"></div>
+                                    <div class="firma-linea">${f.jefe}<br>${f.cargo}</div>
+                                </div>
+                                <div class="firma">
+                                    <div style="height: 50px;"></div>
+                                    <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
+                                </div>
+                            </div>
+
+                            <div class="qr">
+                                <div style="font-size:10px; margin-bottom: 5px;">Folio: <strong>${folio}</strong></div>
+                                <img src="${qrDataURL}">
+                                <div style="font-size: 9px; margin-top: 5px;">Valida en: itcancun.edu.mx/validar</div>
+                            </div>
                         </div>
 
-                        <div class="cuerpo">
-                            <p>El que suscribe <strong>${f.jefe}</strong>, ${f.cargo}, se permite hacer de su conocimiento que el (la) alumno (a) <strong>${nombre}</strong>, con número de control <strong>${noControl}</strong>, de la carrera de <strong><em>${carrera}</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em>${curso}</em></strong>, en la plataforma de ${plataforma}, con un valor de 1 crédito.</p>
-                            <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los ${parseInt(d)} días del mes de ${mesTexto} del ${y}.</p>
-                        </div>
-
-                        <div class="atentamente">ATENTAMENTE</div>
-
-                        <div class="firmas">
-                            <div class="firma">
-                                <div style="height: 50px;"></div>
-                                <div class="firma-linea">${f.jefe}<br>${f.cargo}</div>
-                            </div>
-                            <div class="firma">
-                                <div style="height: 50px;"></div>
-                                <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
-                            </div>
-                        </div>
-
-                        <div class="qr">
-                            <div style="font-size:10px; margin-bottom: 5px;">Folio: <strong>${folio}</strong></div>
-                            <img src="${qrDataURL}">
-                            <div style="font-size: 9px; margin-top: 5px;">Valida en: itcancun.edu.mx/validar</div>
-                        </div>
+                        <!-- PIE DE PÁGINA IMAGEN -->
+                        <img src="pie_pagina.png" class="footer-img">
                     </div>
                 </body>
                 </html>
@@ -495,12 +493,12 @@
 
             ventana.document.close();
             
-            // Le damos medio segundo para que carguen las imágenes y abrimos la ventana de "Guardar como PDF"
+            // Le damos un segundo para que carguen las imágenes y abrimos la ventana de "Guardar como PDF"
             ventana.onload = function() {
                 setTimeout(() => {
                     ventana.focus();
                     ventana.print();
-                }, 500);
+                }, 1000);
             };
         }
     </script>
