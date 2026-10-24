@@ -6,8 +6,6 @@
     <title>Emisor de Constancias - ITCancún</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         /* ESTILO GLOBAL Y FONDO OSCURO */
@@ -55,6 +53,8 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
             max-width: 750px; 
             width: 100%;
+            position: relative;
+            z-index: 10;
         }
 
         .section-title { font-size: 14px; font-weight: 600; color: #38bdf8; margin: 20px 0 12px 0; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -121,38 +121,6 @@
 
         #qrArea { margin-top: 25px; min-height: 250px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.2); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15); }
         .status { text-align: center; font-size: 13px; color: #10b981; font-weight: 600; margin-top: 12px; }
-        
-        /* ═══════ ARREGLO CLAVE PARA QUE EL PDF FUNCIONE EN LA WEB ═══════ */
-        #cartaPDF { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: -9999; 
-            opacity: 0; 
-            pointer-events: none; 
-            width: 816px; 
-            min-height: 1056px; 
-            background: white; 
-            padding: 50px; 
-            font-family: 'Times New Roman', serif; 
-            color: #000; 
-            font-size: 13px; 
-            line-height: 1.7; 
-            box-sizing: border-box; 
-        }
-        
-        .carta-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
-        .carta-header-left img { width: 130px; margin-top: 5px; }
-        .carta-header-right .instituto { font-size: 13px; font-weight: bold; }
-        .carta-header-right .subdireccion { font-size: 11px; margin-bottom: 8px; }
-        .carta-titulo { text-align: center; font-size: 14px; font-weight: bold; margin: 20px 0; }
-        .carta-cuerpo { text-align: justify; margin: 25px 0; }
-        .carta-firmas { margin-top: 60px; display: flex; justify-content: space-around; align-items: flex-end; }
-        .firma-bloque { text-align: center; width: 40%; }
-        .firma-linea { border-top: 1.5px solid #000; padding-top: 6px; font-size: 11px; font-weight: bold; }
-        .atentamente { text-align: center; font-weight: bold; font-size: 13px; margin-top: 30px; }
-        .carta-qr { text-align: right; margin-top: 20px; }
-        .carta-qr img { width: 90px; height: 90px; }
     </style>
 </head>
 <body>
@@ -209,7 +177,6 @@
             </div>
         </div>
 
-        <!-- CAMBIO 1: Texto cambiado a "Va firmado por" -->
         <div class="info-box" id="infoFormato">
             ℹ️ Selecciona una carrera para ver quién firma la constancia.
         </div>
@@ -218,7 +185,6 @@
         <div class="row">
             <div class="field full">
                 <label>Selecciona el Curso MOOC (Catálogo Oficial)</label>
-                <!-- CAMBIO 2: Lista desplegable con los 45 cursos -->
                 <select id="curso">
                     <option value="">— Selecciona el curso —</option>
                     <option value="Diseño de Experimentos con un Factor">Diseño de Experimentos con un Factor</option>
@@ -311,47 +277,6 @@
         </div>
     </div>
 
-    <!-- CARTA OCULTA PARA EL PDF -->
-    <div id="cartaPDF">
-        <div class="carta-header">
-            <div class="carta-header-left">
-                <div style="font-size:11px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
-                <img src="logo.png" alt="ITC">
-            </div>
-            <div class="carta-header-right">
-                <div class="instituto">Instituto Tecnológico de Cancún</div>
-                <div class="subdireccion">Subdirección Académica</div>
-                <div class="subdireccion" id="pdfDepartamento"></div>
-            </div>
-        </div>
-        <div class="carta-titulo">Constancia de Acreditación de Actividad Complementaria</div>
-        <div class="carta-titulo" style="font-size: 12px; margin-top: 15px;">
-            <div id="pdfDirigido">JEFE DEL DEPARTAMENTO</div>
-            <div style="font-weight: normal;">PRESENTE</div>
-        </div>
-        <div class="carta-cuerpo">
-            <!-- CAMBIO 3: El curso ahora va en negritas y cursiva usando <strong><em> -->
-            <p>El que suscribe <strong id="pdfJefe">NOMBRE DEL JEFE</strong>, <span id="pdfCargo">Cargo</span>, se permite hacer de su conocimiento que el (la) alumno (a) <strong id="pdfAlumno">ALUMNO</strong>, con número de control <strong id="pdfControl">000</strong>, de la carrera de <strong><em id="pdfCarrera">CARRERA</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em id="pdfCurso">CURSO</em></strong>, en la plataforma de <span id="pdfPlataforma">PLATAFORMA</span>, con un valor de <span id="pdfCreditos">1</span> crédito.</p>
-            <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los <span id="pdfDia">01</span> días del mes de <span id="pdfMes">enero</span> del <span id="pdfAño">2026</span>.</p>
-        </div>
-        <div class="atentamente">ATENTAMENTE</div>
-        <div class="carta-firmas">
-            <div class="firma-bloque">
-                <div style="height: 55px;"></div>
-                <div class="firma-linea" id="pdfFirmaJefe">NOMBRE<br>CARGO</div>
-            </div>
-            <div class="firma-bloque">
-                <div style="height: 55px;"></div>
-                <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
-            </div>
-        </div>
-        <div class="carta-qr">
-            <div style="font-size:10px;">Folio: <strong id="pdfFolio">XXXX</strong></div>
-            <div id="pdfQRContainer"></div>
-            <div style="font-size: 9px;">Valida en: itcancun.edu.mx/validar</div>
-        </div>
-    </div>
-
     <script>
         let qrDataURL = null;
         const URL_BASE = 'https://jorgeperrez754-arch.github.io/validar-constancias-itc/?folio=';
@@ -387,7 +312,6 @@
             const info = document.getElementById('infoFormato');
             if (!carrera || !FORMATOS[carrera]) { info.innerHTML = 'ℹ️ Selecciona una carrera para ver quién firma la constancia.'; return; }
             const f = FORMATOS[carrera];
-            // CAMBIO 1: Texto cambiado a "Va firmado por:"
             info.innerHTML = `<strong>Va firmado por:</strong> ${f.jefe}<br><strong>Cargo:</strong> ${f.cargo}<br><strong>Firma subdirector:</strong> Diego Ramón Briceño Domínguez`;
         }
 
@@ -398,21 +322,14 @@
                 const carrera = document.getElementById('carrera').value;
                 const curso = document.getElementById('curso').value;
                 const plataforma = document.getElementById('plataforma').value;
-                const creditos = document.getElementById('creditos').value;
                 const fecha = document.getElementById('fecha').value;
                 const folio = document.getElementById('folio').value.trim();
                 
                 const archivoInput = document.getElementById('archivoPDF');
-                if (archivoInput.files.length === 0) {
-                    return alert('⚠️ Es obligatorio subir el certificado en PDF como evidencia.');
-                }
-
-                if (!nombre || !noControl || !carrera || !curso || !fecha || !folio) {
-                    return alert('Por favor, llena todos los campos de texto y genera un folio.');
-                }
+                if (archivoInput.files.length === 0) return alert('⚠️ Sube el certificado en PDF.');
+                if (!nombre || !noControl || !carrera || !curso || !fecha || !folio) return alert('Llena todos los campos.');
 
                 const url = URL_BASE + folio;
-
                 const tempDiv = document.createElement('div');
                 new QRCode(tempDiv, { text: url, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.H });
                 await new Promise(r => setTimeout(r, 300));
@@ -439,44 +356,14 @@
                 qrArea.appendChild(canvasFinal);
                 qrDataURL = canvasFinal.toDataURL('image/png');
 
-                const f = FORMATOS[carrera];
-                document.getElementById('pdfJefe').textContent = f.jefe;
-                document.getElementById('pdfCargo').textContent = f.cargo;
-                document.getElementById('pdfDirigido').textContent = f.jefe + ' - ' + f.cargo;
-                document.getElementById('pdfDepartamento').textContent = f.departamento;
-                document.getElementById('pdfAlumno').textContent = nombre;
-                document.getElementById('pdfControl').textContent = noControl;
-                document.getElementById('pdfCarrera').textContent = carrera;
-                document.getElementById('pdfCurso').textContent = curso;
-                document.getElementById('pdfPlataforma').textContent = plataforma;
-                document.getElementById('pdfCreditos').textContent = creditos;
-                document.getElementById('pdfFolio').textContent = folio;
-                document.getElementById('pdfFirmaJefe').innerHTML = f.jefe + '<br>' + f.cargo;
-
-                const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-                const [y, m, d] = fecha.split('-');
-                document.getElementById('pdfDia').textContent = parseInt(d);
-                document.getElementById('pdfMes').textContent = meses[parseInt(m) - 1];
-                document.getElementById('pdfAño').textContent = y;
-
-                const qrCarta = document.getElementById('pdfQRContainer');
-                qrCarta.innerHTML = '';
-                const qrImg = document.createElement('img');
-                qrImg.src = qrDataURL;
-                qrCarta.appendChild(qrImg);
-
                 document.getElementById('status').textContent = '✅ Constancia generada. Lista para descargar.';
                 
                 let historial = JSON.parse(localStorage.getItem('historial_itc') || '[]');
-                historial.push({
-                    folio, nombre, noControl, carrera, curso, plataforma, fecha,
-                    evidencia: archivoInput.files[0].name
-                });
+                historial.push({ folio, nombre, noControl, carrera, curso, plataforma, fecha, evidencia: archivoInput.files[0].name });
                 localStorage.setItem('historial_itc', JSON.stringify(historial));
 
             } catch (error) {
-                alert("Hubo un error al generar la constancia: " + error.message);
-                console.error(error);
+                alert("Error: " + error.message);
             }
         }
 
@@ -495,39 +382,126 @@
         }
 
         function guardarQR() {
-            if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA' para crear el código QR.");
+            if (!qrDataURL) return alert("Primero genera la constancia.");
             const link = document.createElement('a');
             link.href = qrDataURL;
             link.download = `QR-${document.getElementById('folio').value}.png`;
             link.click();
         }
 
-        async function generarPDF() {
-            if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA' para crear el código QR.");
-            
-            const btnPDF = document.getElementById('btnPDF');
-            const textoOriginal = btnPDF.innerHTML;
-            btnPDF.innerHTML = "⏳ Generando...";
+        // =========================================================================
+        // SOLUCIÓN DEFINITIVA: Pestaña nueva + Motor de impresión del navegador
+        // =========================================================================
+        function generarPDF() {
+            if (!qrDataURL) return alert("Primero debes hacer clic en 'GENERAR CONSTANCIA'.");
 
-            try {
-                const carta = document.getElementById('cartaPDF');
-                const canvas = await html2canvas(carta, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-                const imgData = canvas.toDataURL('image/png');
-                
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'letter');
-                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
-                
-                const folio = document.getElementById('folio').value || 'sin-folio';
-                pdf.save(`Constancia-${folio}.pdf`);
-                
-                btnPDF.innerHTML = "✅ ¡Descargado!";
-                setTimeout(() => { btnPDF.innerHTML = textoOriginal; }, 2000);
-            } catch (e) {
-                alert("Hubo un error al generar el PDF. Intenta de nuevo.");
-                btnPDF.innerHTML = textoOriginal;
-                console.error(e);
-            }
+            const folio = document.getElementById('folio').value || 'sin-folio';
+            const nombre = document.getElementById('nombre').value;
+            const noControl = document.getElementById('noControl').value;
+            const carrera = document.getElementById('carrera').value;
+            const curso = document.getElementById('curso').value;
+            const plataforma = document.getElementById('plataforma').value;
+            const fecha = document.getElementById('fecha').value;
+            
+            const f = FORMATOS[carrera];
+            const [y, m, d] = fecha.split('-');
+            const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+            const mesTexto = meses[parseInt(m) - 1];
+
+            const ventana = window.open('', '_blank');
+            
+            // Aquí construimos el HTML exacto de la carta para la ventana nueva
+            ventana.document.write(`
+                <html>
+                <head>
+                    <title>Constancia-${folio}</title>
+                    <style>
+                        /* Ajustes milimétricos para que quepa en 1 hoja */
+                        @page { margin: 0; size: letter; }
+                        body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
+                        .carta { 
+                            width: 216mm; 
+                            height: 279mm; 
+                            padding: 25mm 20mm; /* Márgenes más pequeños */
+                            box-sizing: border-box; 
+                            font-family: 'Times New Roman', serif; 
+                            color: #000; 
+                            font-size: 13px; 
+                            line-height: 1.5; 
+                            overflow: hidden; /* Evita que se desborde a otra hoja */
+                        }
+                        .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+                        .header-left img { width: 100px; margin-top: 5px; } /* Escudo más chico */
+                        .header-right { text-align: left; }
+                        .header-right .instituto { font-size: 13px; font-weight: bold; }
+                        .titulo { text-align: center; font-size: 14px; font-weight: bold; margin: 20px 0; }
+                        .cuerpo { text-align: justify; margin: 25px 0; }
+                        .firmas { margin-top: 60px; display: flex; justify-content: space-around; align-items: flex-end; }
+                        .firma { text-align: center; width: 40%; }
+                        .firma-linea { border-top: 1.5px solid #000; padding-top: 6px; font-size: 11px; font-weight: bold; line-height: 1.4; }
+                        .atentamente { text-align: center; font-weight: bold; font-size: 13px; margin-top: 30px; }
+                        .qr { text-align: right; margin-top: 20px; }
+                        .qr img { width: 80px; height: 80px; } /* QR más chico */
+                    </style>
+                </head>
+                <body>
+                    <div class="carta">
+                        <div class="header">
+                            <div class="header-left">
+                                <div style="font-size:11px;"><strong>Educación</strong><br>Secretaría de Educación Pública</div>
+                                <img src="logo.png">
+                            </div>
+                            <div class="header-right">
+                                <div class="instituto">Instituto Tecnológico de Cancún</div>
+                                <div style="font-size: 11px; margin-bottom: 5px;">Subdirección Académica</div>
+                                <div style="font-size: 11px;">${f.departamento}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="titulo">Constancia de Acreditación de Actividad Complementaria</div>
+                        
+                        <div class="titulo" style="font-size: 12px; margin-top: 15px;">
+                            <div>${f.jefe} - ${f.cargo}</div>
+                            <div style="font-weight: normal; margin-top: 5px;">PRESENTE</div>
+                        </div>
+
+                        <div class="cuerpo">
+                            <p>El que suscribe <strong>${f.jefe}</strong>, ${f.cargo}, se permite hacer de su conocimiento que el (la) alumno (a) <strong>${nombre}</strong>, con número de control <strong>${noControl}</strong>, de la carrera de <strong><em>${carrera}</em></strong>, ha ACREDITADO la Actividad Complementaria en los Eventos Académicos relacionada con el curso <strong><em>${curso}</em></strong>, en la plataforma de ${plataforma}, con un valor de 1 crédito.</p>
+                            <p style="margin-top: 20px;">Se extiende la presente en la ciudad de Cancún, Quintana Roo, a los ${parseInt(d)} días del mes de ${mesTexto} del ${y}.</p>
+                        </div>
+
+                        <div class="atentamente">ATENTAMENTE</div>
+
+                        <div class="firmas">
+                            <div class="firma">
+                                <div style="height: 50px;"></div>
+                                <div class="firma-linea">${f.jefe}<br>${f.cargo}</div>
+                            </div>
+                            <div class="firma">
+                                <div style="height: 50px;"></div>
+                                <div class="firma-linea">DIEGO RAMÓN BRICEÑO DOMÍNGUEZ<br>SUBDIRECTOR ACADÉMICO</div>
+                            </div>
+                        </div>
+
+                        <div class="qr">
+                            <div style="font-size:10px; margin-bottom: 5px;">Folio: <strong>${folio}</strong></div>
+                            <img src="${qrDataURL}">
+                            <div style="font-size: 9px; margin-top: 5px;">Valida en: itcancun.edu.mx/validar</div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+
+            ventana.document.close();
+            
+            // Le damos medio segundo para que carguen las imágenes y abrimos la ventana de "Guardar como PDF"
+            ventana.onload = function() {
+                setTimeout(() => {
+                    ventana.focus();
+                    ventana.print();
+                }, 500);
+            };
         }
     </script>
 </body>
